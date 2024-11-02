@@ -52,7 +52,6 @@ jobs:
 
       - name: Build project
         run: make
-
   sync_repository:
     needs: [ check_the_repository_state ]
     if: ${{ !github.event.pull_request }}
@@ -60,19 +59,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
+            
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.GH_SSH_PRIVATE_KEY }}
           known_hosts: $GH_PUB_KEY
-
-      - name: Setup GIT
+  
+      - name: Setup git
         run: |
-          git config --global user.email "savinien.petitjean@epitech.eu"
-          git config --global user.name "savalet"
-          git remote add epitech "${{ secrets.GH_TARGET_REPO }}"
+            git config --global user.email "savinien.petitjean@epitech.eu"
+            git config --global user.name "savalet"
+            git remote add target "${{ secrets.GH_TARGET_REPO }}"
 
-      - name: Push to Epitech
+      - name: Create the verbatim branch
         run: |
-          git push epitech main
+              git checkout -b verbatim || git checkout verbatim
+              git push --set-upstream target verbatim --force
