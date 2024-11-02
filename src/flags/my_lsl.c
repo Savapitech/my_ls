@@ -21,7 +21,7 @@ void my_print_all(struct stat *st, struct dirent *sd, struct passwd *passwd,
         sd->d_name);
 }
 
-int my_lsl(char *path)
+int my_lsl(lsinfo_t *lsinfo)
 {
     struct stat st;
     struct dirent *sd;
@@ -30,10 +30,10 @@ int my_lsl(char *path)
     char *file;
     DIR *dir;
 
-    dir = opendir(path);
+    dir = opendir(lsinfo->path);
     for (sd = readdir(dir); sd != NULL; sd = readdir(dir)) {
-        if (sd->d_name[0] != '.') {
-            file = my_strcat(my_strcat(path, "/"), sd->d_name);
+        if (sd->d_name[0] != '.' || lsinfo->flags & FLAGS_ALL_FILES) {
+            file = my_strcat(my_strcat(lsinfo->path, "/"), sd->d_name);
             stat(file, &st);
             passwd = getpwuid(st.st_uid);
             grp = getgrgid(st.st_gid);

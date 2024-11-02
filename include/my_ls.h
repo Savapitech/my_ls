@@ -34,7 +34,7 @@ int parser(int, char **);
 void my_switch(struct stat *);
 void my_switch2(struct stat *);
 int my_ls(lsinfo_t *);
-int my_lsl(char *);
+int my_lsl(lsinfo_t *);
 void my_rights_calc(struct stat *);
 void my_count_blocks(char *);
 #endif

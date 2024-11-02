@@ -21,11 +21,11 @@ int my_ls(lsinfo_t *lsinfo)
 
     if (lsinfo->flags & FLAGS_LONG_LISTING) {
         my_count_blocks(lsinfo->path);
-        return (my_lsl(lsinfo->path));
+        return (my_lsl(lsinfo));
     }
     dir = opendir(lsinfo->path);
     for (sd = readdir(dir); sd != NULL; sd = readdir(dir))
-        if (sd->d_name[0] != '.')
+        if (sd->d_name[0] != '.' || lsinfo->flags & FLAGS_ALL_FILES)
             my_printf("%s  ", sd->d_name);
     closedir(dir);
     my_printf("\n");
