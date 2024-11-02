@@ -15,7 +15,7 @@ int my_printf(char *fmt, ...)
     if (!fmt)
         return EXIT_ERROR;
     va_start(args, fmt);
-    result = parser(fmt, args);
+    result = printf_parser(fmt, args);
     va_end(args);
     return result;
 }

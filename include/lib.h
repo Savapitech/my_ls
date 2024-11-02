@@ -11,6 +11,8 @@
     #include <stddef.h>
     #include <stdlib.h>
     #include <unistd.h>
+    #include "my.h"
+
 int my_get_array_size(char **);
 int my_putchar(char);
 int my_isneg(int);

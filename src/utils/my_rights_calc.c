@@ -1,5 +1,5 @@
 /*
-** EPITECH PROJECT, 2023
+** EPITECH PROJECT, 2024
 ** B-PSU-100-REN-1-1-myls-savinien.petitjean
 ** File description:
 ** src/utils/my_rights_calc.c
@@ -7,6 +7,11 @@
 
 #include "lib.h"
 #include "my_ls.h"
+#include <dirent.h>
+#include <grp.h>
+#include <pwd.h>
+#include <sys/stat.h>
+#include <time.h>
 
 void my_rights_calc(struct stat *st)
 {

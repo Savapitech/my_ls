@@ -12,7 +12,7 @@ NAME := my_ls
 LIB_NAME := libmy.a
 
 SRC := $(wildcard src/*.c)
-SRC += $(wildcard src/args/*.c)
+SRC += $(wildcard src/flags/*.c)
 SRC += $(wildcard src/utils/*.c)
 
 LIB_SRC := $(wildcard lib/my/*.c)

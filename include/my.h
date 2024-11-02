@@ -65,7 +65,7 @@ int baby_strlen(char *);
 size_t baby_intlen(size_t truc, int);
 int baby_strpnum(char **);
 int my_printf(char *, ...);
-int parser(char *, va_list);
+int printf_parser(char *, va_list);
 void printf_put_float(flags_t *);
 void printf_put_hex(flags_t *);
 void printf_put_nbr(flags_t *);

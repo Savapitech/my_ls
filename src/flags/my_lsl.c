@@ -1,17 +1,22 @@
 /*
-** EPITECH PROJECT, 2023
+** EPITECH PROJECT, 2024
 ** B-PSU-100-REN-1-1-myls-savinien.petitjean
 ** File description:
-** src/args/my_lsl.c
+** src/flags/my_lsl.c
 */
 
 #include "lib.h"
 #include "my_ls.h"
+#include <dirent.h>
+#include <grp.h>
+#include <pwd.h>
+#include <sys/stat.h>
+#include <time.h>
 
 void my_print_all(struct stat *st, struct dirent *sd, struct passwd *passwd,
     struct group *grp)
 {
-    my_printf("%*d %s %s %d %s %s\n", 10, st->st_nlink, passwd->pw_name,
+    my_printf("%d %s %s %d %s %s\n", st->st_nlink, passwd->pw_name,
         grp->gr_name, st->st_size, my_strpop(ctime(&st->st_mtime), 9),
         sd->d_name);
 }

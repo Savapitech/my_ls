@@ -133,7 +133,7 @@ bool handle_flags(flags_t *flags)
     return true;
 }
 
-int parser(char *fmt, va_list args)
+int printf_parser(char *fmt, va_list args)
 {
     int count = 0;
     flags_t flags = { .fmt = fmt, .precision = -1, 0 };
