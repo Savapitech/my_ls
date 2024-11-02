@@ -11,6 +11,7 @@
 
 # Bin
 libmy.a
+my_ls
 test
 
 # Build
