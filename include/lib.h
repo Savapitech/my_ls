@@ -65,4 +65,5 @@ int my_str_isupper(char *);
 int my_str_isprintable(char *);
 void *my_memcpy(uint8_t *, uint8_t const *, size_t);
 void *my_realloc(void *, size_t, size_t);
+char *my_numstr(char *, int);
 #endif /* LIB_H_ */

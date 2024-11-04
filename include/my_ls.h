@@ -12,6 +12,7 @@
     #include <pwd.h>
     #include <stdint.h>
     #include <sys/stat.h>
+    #include "my.h"
 
 typedef struct {
     int ac;
@@ -30,6 +31,22 @@ typedef enum {
     FLAGS_TIME_SORT = 1 << 5
 } flags_shifts_t;
 
+typedef struct {
+    buff_t perms;
+    int inodes;
+    buff_t user;
+    buff_t group;
+    int size;
+    buff_t date;
+    buff_t name;
+} ls_buff_t;
+
+typedef struct {
+    char *ptr;
+    size_t capacity;
+    size_t size;
+} string_pool_t;
+
 int parser(int, char **);
 void my_switch(struct stat *);
 void my_switch2(struct stat *);
@@ -37,4 +54,5 @@ int my_ls(lsinfo_t *);
 int my_lsl(lsinfo_t *);
 void my_rights_calc(struct stat *);
 void my_count_blocks(char *);
+int my_count_files(lsinfo_t *);
 #endif
