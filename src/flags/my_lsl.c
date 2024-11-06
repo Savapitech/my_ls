@@ -38,7 +38,7 @@ void my_print_all(struct dirent *sd, ls_buff_t *ls_buff,
     passwd = getpwuid(st.st_uid);
     grp = getgrgid(st.st_gid);
     my_rights_calc(ls_buff, &st, i);
-    ls_buff[i].perms[9] = '\0';
+    ls_buff[i].perms[10] = '\0';
     my_numstr(ls_buff[i].inodes, st.st_nlink);
     ls_buff[i].user.str = my_strdup(passwd->pw_name);
     ls_buff[i].group.str = my_strdup(grp->gr_name);

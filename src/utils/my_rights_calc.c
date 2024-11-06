@@ -28,9 +28,9 @@ void my_rights_calc(ls_buff_t *ls_buff, struct stat *st, int i)
     ls_buff[i].perms[7] = st->st_mode & S_IROTH ? 'r' : '-';
     ls_buff[i].perms[8] = st->st_mode & S_IWOTH ? 'w' : '-';
     if ((st->st_mode & S_ISVTX) && !(st->st_mode & S_IXOTH))
-        ls_buff[i].perms[8] = 'T';
+        ls_buff[i].perms[9] = 'T';
     else if ((st->st_mode & S_ISVTX) && (st->st_mode & S_IXOTH))
-        ls_buff[i].perms[8] = 't';
+        ls_buff[i].perms[9] = 't';
     else
-        ls_buff[i].perms[8] = st->st_mode & S_IXOTH ? 'x' : '-';
+        ls_buff[i].perms[9] = st->st_mode & S_IXOTH ? 'x' : '-';
 }
