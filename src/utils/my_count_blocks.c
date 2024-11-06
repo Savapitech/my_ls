@@ -29,6 +29,5 @@ void my_count_blocks(char *path)
             tot += st.st_blocks;
     }
     closedir(dir);
-    free(str);
     my_printf("total %d\n", tot / 2);
 }

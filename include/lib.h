@@ -12,6 +12,7 @@
     #include <stdlib.h>
     #include <unistd.h>
     #include "my.h"
+    #define IDX_OF(array, i, mem_s) (array + ((i) * (mem_s)))
 
 int my_get_array_size(char **);
 int my_putchar(char);

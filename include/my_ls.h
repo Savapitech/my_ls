@@ -7,12 +7,12 @@
 
 #ifndef MY_H_
     #define MY_H_
+    #include "my.h"
     #include <dirent.h>
     #include <grp.h>
     #include <pwd.h>
     #include <stdint.h>
     #include <sys/stat.h>
-    #include "my.h"
 
 typedef struct {
     int ac;
@@ -32,12 +32,13 @@ typedef enum {
 } flags_shifts_t;
 
 typedef struct {
-    buff_t perms;
-    int inodes;
+    char perms[11];
+    char inodes[10];
     buff_t user;
     buff_t group;
-    int size;
+    char size[10];
     buff_t date;
+    int timestamp;
     buff_t name;
 } ls_buff_t;
 
@@ -52,7 +53,7 @@ void my_switch(struct stat *);
 void my_switch2(struct stat *);
 int my_ls(lsinfo_t *);
 int my_lsl(lsinfo_t *);
-void my_rights_calc(struct stat *);
+void my_rights_calc(ls_buff_t *, struct stat *, int);
 void my_count_blocks(char *);
 int my_count_files(lsinfo_t *);
 #endif

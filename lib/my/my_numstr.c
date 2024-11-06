@@ -13,12 +13,14 @@ char *my_numstr(char *ptr, int nb)
 
     if (nb == 0) {
         *ptr = '0';
+        ptr[1] = '\0';
         return ptr;
     }
-    ptr += len - 1;
+    ptr += len;
     for (; nb > 0; nb /= 10) {
-        *ptr = (nb % 10) + '0';
         ptr--;
+        *ptr = (nb % 10) + '0';
     }
+    ptr[len] = '\0';
     return ptr;
 }

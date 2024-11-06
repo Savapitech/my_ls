@@ -26,7 +26,7 @@ int my_ls(lsinfo_t *lsinfo)
     dir = opendir(lsinfo->path);
     for (sd = readdir(dir); sd != NULL; sd = readdir(dir))
         if (sd->d_name[0] != '.' || lsinfo->flags & FLAGS_ALL_FILES)
-            my_printf("%s\n", sd->d_name);
+            my_printf("%s  ", sd->d_name);
     closedir(dir);
     my_printf("\n");
     return (0);
