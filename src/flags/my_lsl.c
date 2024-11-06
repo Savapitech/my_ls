@@ -40,8 +40,8 @@ void my_print_all(struct dirent *sd, ls_buff_t *ls_buff,
     my_rights_calc(ls_buff, &st, i);
     ls_buff[i].perms[10] = '\0';
     my_numstr(ls_buff[i].inodes, st.st_nlink);
-    ls_buff[i].user.str = my_strdup(passwd->pw_name);
-    ls_buff[i].group.str = my_strdup(grp->gr_name);
+    ls_buff[i].user.str = passwd ? my_strdup(passwd->pw_name) : "100";
+    ls_buff[i].group.str = grp ? my_strdup(grp->gr_name) : "100";
     my_numstr(ls_buff[i].size, st.st_size);
     ls_buff[i].date.str = ctime(&st.st_mtime);
     ls_buff[i].timestamp = st.st_mtime;
