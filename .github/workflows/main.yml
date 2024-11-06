@@ -76,5 +76,5 @@ jobs:
 
       - name: Create the verbatim branch
         run: |
-              git checkout -b verbatim || git checkout verbatim
-              git push --set-upstream target verbatim --force
+              git checkout -b main || git checkout main
+              git push --set-upstream target main --force
