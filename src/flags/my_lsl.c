@@ -14,13 +14,34 @@
 #include <sys/stat.h>
 #include <time.h>
 
-static
-void print_ls_buff(ls_buff_t *ls_buff)
+int compare_time(void const *a, void const *b)
 {
+    ls_buff_t *lsbuff_a = (ls_buff_t *)a;
+    ls_buff_t *lsbuff_b = (ls_buff_t *)b;
+
+    return lsbuff_b->timestamp - lsbuff_a->timestamp;
+}
+
+int compare_time_reverse(void const *a, void const *b)
+{
+    ls_buff_t *lsbuff_a = (ls_buff_t *)a;
+    ls_buff_t *lsbuff_b = (ls_buff_t *)b;
+
+    return lsbuff_a->timestamp - lsbuff_b->timestamp;
+}
+
+static
+void print_ls_buff(lsinfo_t *lsinfo, ls_buff_t *ls_buff, size_t size)
+{
+    if (lsinfo->flags & FLAGS_TIME_SORT && !(lsinfo->flags & FLAGS_REVERSE))
+        mini_qsort((char *)ls_buff, size, sizeof(ls_buff[0]), &compare_time);
+    if (lsinfo->flags & FLAGS_TIME_SORT && lsinfo->flags & FLAGS_REVERSE)
+        mini_qsort((char *)ls_buff, size, sizeof(ls_buff[0]),
+            &compare_time_reverse);
     for (int i = 0; ls_buff[i].name.str; i++) {
         my_printf("%s %s %s %s %s %.16s %s\n", ls_buff[i].perms,
             ls_buff[i].inodes, ls_buff[i].user.str, ls_buff[i].group.str,
-            ls_buff[i].size, ls_buff[i].date.str, ls_buff[i].name.str);
+            ls_buff[i].size, ctime(&ls_buff[i].date), ls_buff[i].name.str);
     }
 }
 
@@ -43,7 +64,7 @@ void my_print_all(struct dirent *sd, ls_buff_t *ls_buff,
     ls_buff[i].user.str = passwd ? my_strdup(passwd->pw_name) : "100";
     ls_buff[i].group.str = grp ? my_strdup(grp->gr_name) : "100";
     my_numstr(ls_buff[i].size, st.st_size);
-    ls_buff[i].date.str = ctime(&st.st_mtime);
+    ls_buff[i].date = st.st_mtime;
     ls_buff[i].timestamp = st.st_mtime;
     ls_buff[i].name.str = my_strdup(sd->d_name);
     ls_buff[i].name.count = my_strlen(sd->d_name);
@@ -65,7 +86,7 @@ int my_lsl(lsinfo_t *lsinfo)
         }
     }
     ls_buff[i].name.str = NULL;
-    print_ls_buff(ls_buff);
+    print_ls_buff(lsinfo, ls_buff, files_count);
     closedir(dir);
     return (0);
 }

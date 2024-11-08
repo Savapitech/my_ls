@@ -37,7 +37,7 @@ typedef struct {
     buff_t user;
     buff_t group;
     char size[10];
-    buff_t date;
+    __time_t date;
     int timestamp;
     buff_t name;
 } ls_buff_t;

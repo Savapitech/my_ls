@@ -12,7 +12,7 @@ void mini_swap(char *a, char *b, size_t size)
 {
     char swap;
 
-    for (int i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         swap = a[i];
         a[i] = b[i];
         b[i] = swap;
