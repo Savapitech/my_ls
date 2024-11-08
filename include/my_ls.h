@@ -54,6 +54,7 @@ void my_switch2(struct stat *);
 int my_ls(lsinfo_t *);
 int my_lsl(lsinfo_t *);
 void my_rights_calc(ls_buff_t *, struct stat *, int);
-void my_count_blocks(char *);
+void my_count_blocks(char *, lsinfo_t *);
 int my_count_files(lsinfo_t *);
+void my_fill_ls_buff(struct dirent *, ls_buff_t *, lsinfo_t *, int);
 #endif

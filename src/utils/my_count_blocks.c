@@ -13,7 +13,7 @@
 #include <sys/stat.h>
 #include <time.h>
 
-void my_count_blocks(char *path)
+void my_count_blocks(char *path, lsinfo_t *lsinfo)
 {
     struct stat st;
     struct dirent *sd;
@@ -25,7 +25,8 @@ void my_count_blocks(char *path)
     dir = opendir(path);
     for (sd = readdir(dir); sd != NULL; sd = readdir(dir)) {
         str = my_strcat(my_strcat(path, "/"), sd->d_name);
-        if ((lstat(str, &st)) == 0 && sd->d_name[0] != '.')
+        if ((lstat(str, &st)) == 0 && ((sd->d_name[0] != '.') ||
+            lsinfo->flags & FLAGS_ALL_FILES))
             tot += st.st_blocks;
     }
     closedir(dir);

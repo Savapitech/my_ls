@@ -20,7 +20,7 @@ int my_ls(lsinfo_t *lsinfo)
     DIR *dir;
 
     if (lsinfo->flags & FLAGS_LONG_LISTING) {
-        my_count_blocks(lsinfo->path);
+        my_count_blocks(lsinfo->path, lsinfo);
         return (my_lsl(lsinfo));
     }
     dir = opendir(lsinfo->path);

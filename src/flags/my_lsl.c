@@ -45,8 +45,7 @@ void print_ls_buff(lsinfo_t *lsinfo, ls_buff_t *ls_buff, size_t size)
     }
 }
 
-static
-void my_print_all(struct dirent *sd, ls_buff_t *ls_buff,
+void my_fill_ls_buff(struct dirent *sd, ls_buff_t *ls_buff,
     lsinfo_t *lsinfo, int i)
 {
     struct stat st;
@@ -81,7 +80,7 @@ int my_lsl(lsinfo_t *lsinfo)
 
     for (sd = readdir(dir); sd != NULL; sd = readdir(dir)) {
         if ((sd->d_name[0] != '.' || lsinfo->flags & FLAGS_ALL_FILES)) {
-            my_print_all(sd, ls_buff, lsinfo, i);
+            my_fill_ls_buff(sd, ls_buff, lsinfo, i);
             i++;
         }
     }
