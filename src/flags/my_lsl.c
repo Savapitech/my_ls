@@ -31,7 +31,7 @@ int compare_time_reverse(void const *a, void const *b)
 }
 
 static
-void print_ls_buff(lsinfo_t *lsinfo, ls_buff_t *ls_buff, size_t size)
+void print_lsl_buff(lsinfo_t *lsinfo, ls_buff_t *ls_buff, size_t size)
 {
     if (lsinfo->flags & FLAGS_TIME_SORT && !(lsinfo->flags & FLAGS_REVERSE))
         mini_qsort((char *)ls_buff, size, sizeof(ls_buff[0]), &compare_time);
@@ -85,7 +85,7 @@ int my_lsl(lsinfo_t *lsinfo)
         }
     }
     ls_buff[i].name.str = NULL;
-    print_ls_buff(lsinfo, ls_buff, files_count);
+    print_lsl_buff(lsinfo, ls_buff, files_count);
     closedir(dir);
     return (0);
 }
