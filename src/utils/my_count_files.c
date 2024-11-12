@@ -18,6 +18,8 @@ int my_count_files(lsinfo_t *lsinfo)
     DIR *dir = opendir(lsinfo->path);
     struct dirent *sd;
 
+    if (dir == NULL)
+        return 0;
     for (sd = readdir(dir); sd != NULL; sd = readdir(dir))
         if (sd->d_name[0] != '.' || lsinfo->flags & FLAGS_ALL_FILES)
             count++;

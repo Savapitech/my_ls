@@ -31,6 +31,41 @@ int compare_time_reverse(void const *a, void const *b)
 }
 
 static
+void printf_lsl_buff3(lsinfo_t *lsinfo, char **dirs, int dir_count,
+    char *old_path)
+{
+    if (lsinfo->flags & FLAGS_RECURSIVE) {
+        for (int i = 0; i < dir_count; i++) {
+            my_printf("\n");
+            lsinfo->path = my_strcat(my_strcat(old_path,
+                my_strcmp(old_path, "/") ? "/" : ""), dirs[i]);
+            my_lsl(lsinfo);
+        }
+    }
+}
+
+static
+void print_lsl_buff2(lsinfo_t *lsinfo, ls_buff_t *ls_buff)
+{
+    int dir_count = 0;
+    char *dirs[255] = { NULL };
+    char *old_path = my_strdup(lsinfo->path);
+
+    for (int i = 0; ls_buff[i].name.str; i++) {
+        my_printf("%s %s %s %s %s %.16s %s\n", ls_buff[i].perms,
+            ls_buff[i].inodes, ls_buff[i].user.str, ls_buff[i].group.str,
+            ls_buff[i].size, ctime(&ls_buff[i].date), ls_buff[i].name.str);
+        if (lsinfo->flags & FLAGS_RECURSIVE && ls_buff[i].perms[0] == 'd' &&
+            my_strcmp(ls_buff[i].name.str, "..") &&
+            my_strcmp(ls_buff[i].name.str, ".")) {
+            dirs[dir_count] = my_strdup(ls_buff[i].name.str);
+            dir_count++;
+        }
+    }
+    printf_lsl_buff3(lsinfo, dirs, dir_count, old_path);
+}
+
+static
 void print_lsl_buff(lsinfo_t *lsinfo, ls_buff_t *ls_buff, size_t size)
 {
     if (lsinfo->flags & FLAGS_TIME_SORT && !(lsinfo->flags & FLAGS_REVERSE))
@@ -38,11 +73,10 @@ void print_lsl_buff(lsinfo_t *lsinfo, ls_buff_t *ls_buff, size_t size)
     if (lsinfo->flags & FLAGS_TIME_SORT && lsinfo->flags & FLAGS_REVERSE)
         mini_qsort((char *)ls_buff, size, sizeof(ls_buff[0]),
             &compare_time_reverse);
-    for (int i = 0; ls_buff[i].name.str; i++) {
-        my_printf("%s %s %s %s %s %.16s %s\n", ls_buff[i].perms,
-            ls_buff[i].inodes, ls_buff[i].user.str, ls_buff[i].group.str,
-            ls_buff[i].size, ctime(&ls_buff[i].date), ls_buff[i].name.str);
-    }
+    if (lsinfo->flags & FLAGS_RECURSIVE)
+        my_printf("%s:\n", lsinfo->path);
+    my_count_blocks(lsinfo->path, lsinfo);
+    print_lsl_buff2(lsinfo, ls_buff);
 }
 
 void my_fill_ls_buff(struct dirent *sd, ls_buff_t *ls_buff,
@@ -78,6 +112,8 @@ int my_lsl(lsinfo_t *lsinfo)
     ls_buff_t ls_buff[files_count + 1];
     int i = 0;
 
+    if (dir == NULL)
+        return 0;
     for (sd = readdir(dir); sd != NULL; sd = readdir(dir)) {
         if ((sd->d_name[0] != '.' || lsinfo->flags & FLAGS_ALL_FILES)) {
             my_fill_ls_buff(sd, ls_buff, lsinfo, i);
