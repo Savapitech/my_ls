@@ -11,9 +11,9 @@
 #include <grp.h>
 #include <pwd.h>
 
-void my_rights_calc(ls_buff_t *ls_buff, struct stat *st, int i)
+static
+void my_rights_calc2(ls_buff_t *ls_buff, struct stat *st, int i)
 {
-    ls_buff[i].perms[0] = S_ISDIR(st->st_mode) ? 'd' : '-';
     ls_buff[i].perms[1] = st->st_mode & S_IRUSR ? 'r' : '-';
     ls_buff[i].perms[2] = st->st_mode & S_IWUSR ? 'w' : '-';
     ls_buff[i].perms[3] = st->st_mode & S_IXUSR ? 'x' : '-';
@@ -33,4 +33,15 @@ void my_rights_calc(ls_buff_t *ls_buff, struct stat *st, int i)
         ls_buff[i].perms[9] = 't';
     else
         ls_buff[i].perms[9] = st->st_mode & S_IXOTH ? 'x' : '-';
+}
+
+void my_rights_calc(ls_buff_t *ls_buff, struct stat *st, int i)
+{
+    ls_buff[i].perms[0] = '-';
+    ls_buff[i].perms[0] = S_ISBLK(st->st_mode) ? 'b' : ls_buff[i].perms[0];
+    ls_buff[i].perms[0] = S_ISSOCK(st->st_mode) ? 's' : ls_buff[i].perms[0];
+    ls_buff[i].perms[0] = S_ISCHR(st->st_mode) ? 'c' : ls_buff[i].perms[0];
+    ls_buff[i].perms[0] = S_ISLNK(st->st_mode) ? 'l' : ls_buff[i].perms[0];
+    ls_buff[i].perms[0] = S_ISDIR(st->st_mode) ? 'd' : ls_buff[i].perms[0];
+    my_rights_calc2(ls_buff, st, i);
 }
