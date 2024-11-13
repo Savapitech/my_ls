@@ -9,12 +9,11 @@
 #include "my_ls.h"
 
 #include <dirent.h>
+#include <errno.h>
 #include <grp.h>
 #include <pwd.h>
 #include <sys/stat.h>
 #include <time.h>
-
-
 
 static
 void printf_ls_buff3(lsinfo_t *lsinfo, char **dirs, int dir_count,
@@ -51,8 +50,9 @@ void print_ls_buff2(lsinfo_t *lsinfo, ls_buff_t *ls_buff)
 }
 
 static
-void print_ls_buff(lsinfo_t *lsinfo, ls_buff_t *ls_buff, size_t size)
+void print_ls_buff(lsinfo_t *lsinfo, ls_buff_t *ls_buff, size_t size, int i)
 {
+    ls_buff[i].name.str = NULL;
     if (lsinfo->flags & FLAGS_TIME_SORT && !(lsinfo->flags & FLAGS_REVERSE))
         mini_qsort((char *)ls_buff, size, sizeof(ls_buff[0]), &compare_time);
     if (lsinfo->flags & FLAGS_TIME_SORT && lsinfo->flags & FLAGS_REVERSE)
@@ -71,18 +71,18 @@ int my_ls(lsinfo_t *lsinfo)
     ls_buff_t ls_buff[files_count + 1];
     int i = 0;
 
-    if (dir == NULL)
-        return 0;
     if (lsinfo->flags & FLAGS_LONG_LISTING)
         return (my_lsl(lsinfo));
+    if (errno == ENOTDIR)
+        return (my_printf("%s\n", lsinfo->path));
+    if (dir == NULL)
+        return 0;
     for (sd = readdir(dir); sd != NULL; sd = readdir(dir)) {
         if ((sd->d_name[0] != '.' || lsinfo->flags & FLAGS_ALL_FILES)) {
-            my_fill_ls_buff(sd, ls_buff, lsinfo, i);
+            my_fill_ls_buff(sd->d_name, ls_buff, lsinfo, i);
             i++;
         }
     }
-    ls_buff[i].name.str = NULL;
-    print_ls_buff(lsinfo, ls_buff, files_count);
-    closedir(dir);
-    return (0);
+    print_ls_buff(lsinfo, ls_buff, files_count, i);
+    return (closedir(dir));
 }

@@ -20,9 +20,12 @@ void my_count_blocks(char *path, lsinfo_t *lsinfo)
     int tot;
     char *str;
     DIR *dir;
+    char result[10];
 
     tot = 0;
     dir = opendir(path);
+    if (dir == NULL)
+        return;
     for (sd = readdir(dir); sd != NULL; sd = readdir(dir)) {
         str = my_strcat(my_strcat(path, "/"), sd->d_name);
         if ((lstat(str, &st)) == 0 && ((sd->d_name[0] != '.') ||
@@ -30,5 +33,6 @@ void my_count_blocks(char *path, lsinfo_t *lsinfo)
             tot += st.st_blocks;
     }
     closedir(dir);
-    my_printf("total %d\n", tot / 2);
+    my_numstr(result, tot / 2);
+    my_printf("total %s\n", result);
 }

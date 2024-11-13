@@ -25,6 +25,8 @@ void my_error(char *path)
             my_puterr("': Permission denied\n");
             exit(84);
         }
+        if (errno == ENOTDIR)
+            return;
         my_puterr("ls: cannot access '");
         my_puterr(path);
         my_puterr("': No such file or directory\n");

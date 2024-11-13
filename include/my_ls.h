@@ -57,7 +57,7 @@ int my_lsl(lsinfo_t *);
 void my_rights_calc(ls_buff_t *, struct stat *, int);
 void my_count_blocks(char *, lsinfo_t *);
 int my_count_files(lsinfo_t *);
-void my_fill_ls_buff(struct dirent *, ls_buff_t *, lsinfo_t *, int);
+void my_fill_ls_buff(char *, ls_buff_t *, lsinfo_t *, int);
 int compare_time(void const *, void const *);
 int compare_time_reverse(void const *, void const *);
 #endif

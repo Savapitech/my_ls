@@ -8,6 +8,7 @@
 #include "lib.h"
 #include "my_ls.h"
 #include <dirent.h>
+#include <errno.h>
 #include <grp.h>
 #include <linux/limits.h>
 #include <pwd.h>
@@ -96,15 +97,15 @@ void print_lsl_buff(lsinfo_t *lsinfo, ls_buff_t *ls_buff, size_t size)
     print_lsl_buff2(lsinfo, ls_buff);
 }
 
-void my_fill_ls_buff(struct dirent *sd, ls_buff_t *ls_buff,
+void my_fill_ls_buff(char *name, ls_buff_t *ls_buff,
     lsinfo_t *lsinfo, int i)
 {
     struct stat st;
     struct passwd *passwd;
     struct group *grp;
-    char *file;
+    char *file = my_strcmp(lsinfo->path, name) == 0 ? name :
+        my_strcat(my_strcat(lsinfo->path, "/"), name);
 
-    file = my_strcat(my_strcat(lsinfo->path, "/"), sd->d_name);
     stat(file, &st);
     passwd = getpwuid(st.st_uid);
     grp = getgrgid(st.st_gid);
@@ -117,26 +118,39 @@ void my_fill_ls_buff(struct dirent *sd, ls_buff_t *ls_buff,
     ls_buff[i].rdev = st.st_rdev;
     ls_buff[i].date = st.st_mtime;
     ls_buff[i].timestamp = st.st_mtime;
-    ls_buff[i].name.str = my_strdup(sd->d_name);
-    ls_buff[i].name.count = my_strlen(sd->d_name);
+    ls_buff[i].name.str = my_strdup(name);
+    ls_buff[i].name.count = my_strlen(name);
+}
+
+static
+int fill_lsl(lsinfo_t *lsinfo, ls_buff_t *ls_buff, DIR *dir)
+{
+    int i = 0;
+    struct dirent *sd;
+
+    for (sd = readdir(dir); sd != NULL; sd = readdir(dir)) {
+        if ((sd->d_name[0] != '.' || lsinfo->flags & FLAGS_ALL_FILES)) {
+            my_fill_ls_buff(sd->d_name, ls_buff, lsinfo, i);
+            i++;
+        }
+    }
+    return i;
 }
 
 int my_lsl(lsinfo_t *lsinfo)
 {
-    struct dirent *sd;
     DIR *dir = opendir(lsinfo->path);
     int files_count = my_count_files(lsinfo);
     ls_buff_t ls_buff[files_count + 1];
     int i = 0;
 
-    if (dir == NULL)
-        return 0;
-    for (sd = readdir(dir); sd != NULL; sd = readdir(dir)) {
-        if ((sd->d_name[0] != '.' || lsinfo->flags & FLAGS_ALL_FILES)) {
-            my_fill_ls_buff(sd, ls_buff, lsinfo, i);
-            i++;
-        }
-    }
+    if (dir != NULL)
+        i = fill_lsl(lsinfo, ls_buff, dir);
+    else if (errno == ENOTDIR) {
+        my_fill_ls_buff(lsinfo->path, ls_buff, lsinfo, i);
+        i ++;
+    } else
+        return (0);
     ls_buff[i].name.str = NULL;
     print_lsl_buff(lsinfo, ls_buff, files_count);
     closedir(dir);
