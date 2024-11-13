@@ -30,7 +30,7 @@ LIB_OBJ := $(LIB_SRC:%.c=$(BUILD_DIR)/%.o)
 
 CC := gcc
 
-CFLAGS += -Wall -Wextra -g3 -O3
+CFLAGS += -Wall -Wextra
 CFLAGS += -iquote ./include
 CFLAGS += -Wno-unused-parameter
 

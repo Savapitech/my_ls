@@ -12,6 +12,7 @@
 #include <linux/limits.h>
 #include <pwd.h>
 #include <sys/stat.h>
+#include <sys/sysmacros.h>
 #include <time.h>
 
 int compare_time(void const *a, void const *b)
@@ -45,6 +46,15 @@ void printf_lsl_buff3(lsinfo_t *lsinfo, char **dirs, int dir_count,
 }
 
 static
+void print_with_devs(ls_buff_t *ls_buff, int i)
+{
+    my_printf("%s %s %s %s %d, %d %.16s %s\n", ls_buff[i].perms,
+        ls_buff[i].inodes, ls_buff[i].user.str, ls_buff[i].group.str,
+        major(ls_buff[i].rdev), minor(ls_buff[i].rdev),
+        ctime(&ls_buff[i].date), ls_buff[i].name.str);
+}
+
+static
 void print_lsl_buff2(lsinfo_t *lsinfo, ls_buff_t *ls_buff)
 {
     int dir_count = 0;
@@ -52,9 +62,12 @@ void print_lsl_buff2(lsinfo_t *lsinfo, ls_buff_t *ls_buff)
     char *old_path = my_strdup(lsinfo->path);
 
     for (int i = 0; ls_buff[i].name.str; i++) {
-        my_printf("%s %s %s %s %s %.16s %s\n", ls_buff[i].perms,
-            ls_buff[i].inodes, ls_buff[i].user.str, ls_buff[i].group.str,
-            ls_buff[i].size, ctime(&ls_buff[i].date), ls_buff[i].name.str);
+        if (baby_stridx("bc", ls_buff[i].perms[0]) != -1)
+            print_with_devs(ls_buff, i);
+        else
+            my_printf("%s %s %s %s %s %.16s %s\n", ls_buff[i].perms,
+                ls_buff[i].inodes, ls_buff[i].user.str, ls_buff[i].group.str,
+                ls_buff[i].size, ctime(&ls_buff[i].date), ls_buff[i].name.str);
         if (lsinfo->flags & FLAGS_RECURSIVE && ls_buff[i].perms[0] == 'd' &&
             my_strcmp(ls_buff[i].name.str, "..") &&
             my_strcmp(ls_buff[i].name.str, ".")) {
@@ -97,11 +110,11 @@ void my_fill_ls_buff(struct dirent *sd, ls_buff_t *ls_buff,
     ls_buff[i].user.str = passwd ? my_strdup(passwd->pw_name) : "100";
     ls_buff[i].group.str = grp ? my_strdup(grp->gr_name) : "100";
     my_numstr(ls_buff[i].size, st.st_size);
+    ls_buff[i].rdev = st.st_rdev;
     ls_buff[i].date = st.st_mtime;
     ls_buff[i].timestamp = st.st_mtime;
     ls_buff[i].name.str = my_strdup(sd->d_name);
     ls_buff[i].name.count = my_strlen(sd->d_name);
-    free(file);
 }
 
 int my_lsl(lsinfo_t *lsinfo)
