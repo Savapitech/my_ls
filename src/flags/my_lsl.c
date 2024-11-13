@@ -15,6 +15,7 @@
 #include <sys/stat.h>
 #include <sys/sysmacros.h>
 #include <time.h>
+#include <stdio.h>
 
 int compare_time(void const *a, void const *b)
 {
@@ -114,7 +115,7 @@ void my_fill_ls_buff(char *name, ls_buff_t *ls_buff,
     my_numstr(ls_buff[i].inodes, st.st_nlink);
     ls_buff[i].user.str = passwd ? my_strdup(passwd->pw_name) : "100";
     ls_buff[i].group.str = grp ? my_strdup(grp->gr_name) : "100";
-    my_numstr(ls_buff[i].size, st.st_size);
+    my_numstr(ls_buff[i].size, st.st_size > 0 ? st.st_size : 0);
     ls_buff[i].rdev = st.st_rdev;
     ls_buff[i].date = st.st_mtime;
     ls_buff[i].timestamp = st.st_mtime;
@@ -148,7 +149,7 @@ int my_lsl(lsinfo_t *lsinfo)
         i = fill_lsl(lsinfo, ls_buff, dir);
     else if (errno == ENOTDIR) {
         my_fill_ls_buff(lsinfo->path, ls_buff, lsinfo, i);
-        i ++;
+        i++;
     } else
         return (0);
     ls_buff[i].name.str = NULL;
