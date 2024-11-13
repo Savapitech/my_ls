@@ -48,10 +48,14 @@ void printf_lsl_buff3(lsinfo_t *lsinfo, char **dirs, int dir_count,
 static
 void print_with_devs(ls_buff_t *ls_buff, int i)
 {
-    my_printf("%s %s %s %s %d, %d %.16s %s\n", ls_buff[i].perms,
+    char majordev[10];
+    char minordev[10];
+
+    my_numstr(majordev, major(ls_buff[i].rdev));
+    my_numstr(minordev, minor(ls_buff[i].rdev));
+    my_printf("%s %s %s %s %s, %s %.16s %s\n", ls_buff[i].perms,
         ls_buff[i].inodes, ls_buff[i].user.str, ls_buff[i].group.str,
-        major(ls_buff[i].rdev), minor(ls_buff[i].rdev),
-        ctime(&ls_buff[i].date), ls_buff[i].name.str);
+        majordev, minordev, ctime(&ls_buff[i].date), ls_buff[i].name.str);
 }
 
 static
